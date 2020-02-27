@@ -35,3 +35,11 @@ struct Holidays: Decodable {
 struct Date: Decodable {
     var iso: String
 }
+
+
+// Structs for Country
+
+struct Country: Decodable {
+    var name: String
+    var code: String
+}

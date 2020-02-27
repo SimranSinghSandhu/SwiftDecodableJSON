@@ -28,6 +28,7 @@ class ViewController: UIViewController {
         
         settingDelegates()
         settingNavigationItems()
+        getCountryData()
         getHolidayData()
         
     }
@@ -60,6 +61,7 @@ class ViewController: UIViewController {
             
         }.resume()
     }
+    
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
@@ -94,5 +96,30 @@ extension ViewController: UISearchBarDelegate {
         navigationItem.searchController?.searchBar.delegate = self
         navigationItem.searchController?.obscuresBackgroundDuringPresentation = false
         navigationItem.searchController?.hidesNavigationBarDuringPresentation = false
+    }
+}
+
+
+// Getting Country Name and Code from Locally Stored JSON.
+
+extension ViewController {
+    private func getCountryData() {
+        let path = Bundle.main.path(forResource: "CountryCode", ofType: "json")
+        let url = URL(fileURLWithPath: path!)
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            
+            guard let data = data else {return}
+            
+            
+            do {
+                let countryData = try JSONDecoder().decode([Country].self, from: data)
+                print(countryData[1].name)
+            } catch {
+                print("Unable to Fetch Country Data = ", error)
+            }
+            
+        }.resume()
+    
     }
 }
