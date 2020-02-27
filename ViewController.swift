@@ -12,8 +12,17 @@ class ViewController: UIViewController {
 
     // Unique Key of Cell for TableViewHoliday
     let holidayCellId = "holidayCellId"
+    let countryCellId = "countryCellId"
     
     @IBOutlet weak var tableViewHoliday: UITableView!
+    
+    lazy var tableViewCountry: UITableView = {
+        let tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
+    }()
     
     // Can create your own API Key from "calendarific.com"
     var apiKey = "533b84a223a70aa1599d38660e5103628c842b3d"
@@ -22,6 +31,7 @@ class ViewController: UIViewController {
     
     // Array of all the Holidays.
     var holidayArray = [Holidays]()
+    var countryArray = [Country]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,14 +82,20 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
       }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return holidayArray.count
+        return tableView == tableViewHoliday ? holidayArray.count : countryArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: holidayCellId)
-        cell.textLabel?.text = holidayArray[indexPath.row].name
-        cell.detailTextLabel?.text = holidayArray[indexPath.row].date.iso
-        return cell
+        if tableView == tableViewHoliday {
+            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: holidayCellId)
+            cell.textLabel?.text = holidayArray[indexPath.row].name
+            cell.detailTextLabel?.text = holidayArray[indexPath.row].date.iso
+            return cell
+        } else {
+            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: countryCellId)
+            cell.textLabel?.text = countryArray[indexPath.row].name
+            return cell
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
