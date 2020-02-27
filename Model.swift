@@ -13,7 +13,7 @@ struct Root: Decodable {
     
     // If the Var name if diffrent from JSON Key, then we use Enums so Swift will know which JSON key we are looking for
     private enum CodingKeys: String, CodingKey {
-        case responses = "respose"
+        case responses = "response"
     }
 }
 

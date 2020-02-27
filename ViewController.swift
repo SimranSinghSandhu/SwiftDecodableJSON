@@ -25,9 +25,23 @@ class ViewController: UIViewController {
     private func getHolidayData() {
         
         // this is will JSON data.
-        let modifiedURL = " https://calendarific.com/api/v2/holidays?&api_key=\(apiKey)&country=\(countryCode)&year=\(holidayYear)"
+        let modifiedURL = "https://calendarific.com/api/v2/holidays?&api_key=\(apiKey)&country=\(countryCode)&year=\(holidayYear)"
         
+        let url = URL(string: modifiedURL)
         
+        URLSession.shared.dataTask(with: url!) { (data, response, error) in
+            
+            guard let data = data else {return}
+            
+            do {
+                // JSONDecoder can Throw Error
+                let holidayData = try JSONDecoder().decode(Root.self, from: data)
+                print(holidayData.responses.holidays[1].name)
+            } catch {
+                print("Unable to Fetch Data = ", error)
+            }
+            
+        }.resume()
         
     }
 
