@@ -10,6 +10,9 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    var screenSize = UIScreen.main.bounds
+    var keyboardHeight = CGFloat()
+    
     // Unique Key of Cell for TableViewHoliday
     let holidayCellId = "holidayCellId"
     let countryCellId = "countryCellId"
@@ -35,6 +38,10 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.addSubview(tableViewCountry)
+        
+        getKeyboardHeight()
         
         settingDelegates()
         settingNavigationItems()
@@ -113,6 +120,42 @@ extension ViewController: UISearchBarDelegate {
         navigationItem.searchController?.obscuresBackgroundDuringPresentation = false
         navigationItem.searchController?.hidesNavigationBarDuringPresentation = false
     }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        showCountryTableView(frame: screenSize)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        hideCountryTableView(frame: screenSize)
+    }
+}
+
+extension ViewController {
+    private func showCountryTableView(frame: CGRect) {
+        UIView.animate(withDuration: 0.2) {
+            self.tableViewCountry.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height - self.keyboardHeight)
+        }
+    }
+    
+    private func hideCountryTableView(frame: CGRect) {
+        UIView.animate(withDuration: 0.2) {
+            self.tableViewCountry.frame = CGRect(x: 0, y: 0, width: frame.width, height: 0)
+        }
+    }
+}
+
+extension ViewController {
+    private func getKeyboardHeight() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil
+        )
+    }
+    
+    @objc func keyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            keyboardHeight = keyboardRectangle.height
+        }
+    }
 }
 
 
@@ -127,10 +170,9 @@ extension ViewController {
             
             guard let data = data else {return}
             
-            
             do {
                 let countryData = try JSONDecoder().decode([Country].self, from: data)
-                print(countryData[1].name)
+                self.countryArray = countryData
             } catch {
                 print("Unable to Fetch Country Data = ", error)
             }
@@ -139,3 +181,4 @@ extension ViewController {
     
     }
 }
+
