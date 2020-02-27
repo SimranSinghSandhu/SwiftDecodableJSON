@@ -27,6 +27,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         settingDelegates()
+        settingNavigationItems()
         getHolidayData()
         
     }
@@ -81,5 +82,17 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
+    }
+}
+
+extension ViewController: UISearchBarDelegate {
+    
+    private func settingNavigationItems() {
+        // Setting Search Bar inside Navigation Controller
+        let searchController = UISearchController(searchResultsController: nil)
+        navigationItem.searchController = searchController
+        navigationItem.searchController?.searchBar.delegate = self
+        navigationItem.searchController?.obscuresBackgroundDuringPresentation = false
+        navigationItem.searchController?.hidesNavigationBarDuringPresentation = false
     }
 }
