@@ -39,7 +39,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" id="Upz-Ex-kd1"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="Upz-Ex-kd1"/>
                     <connections>
                         <outlet property="tableViewHoliday" destination="QLh-XE-Ksr" id="e7C-0O-Kjz"/>
                     </connections>

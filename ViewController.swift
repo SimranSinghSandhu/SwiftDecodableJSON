@@ -35,6 +35,7 @@ class ViewController: UIViewController {
     // Array of all the Holidays.
     var holidayArray = [Holidays]()
     var countryArray = [Country]()
+    var sortedCountryArray = [Country]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,7 +47,9 @@ class ViewController: UIViewController {
         settingDelegates()
         settingNavigationItems()
         getCountryData()
-        getHolidayData()
+//        getHolidayData()
+        
+        print()
         
     }
 
@@ -91,7 +94,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
       }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tableView == tableViewHoliday ? holidayArray.count : countryArray.count
+        return tableView == tableViewHoliday ? holidayArray.count : sortedCountryArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -102,7 +105,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         } else {
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: countryCellId)
-            cell.textLabel?.text = countryArray[indexPath.row].name
+            cell.textLabel?.text = sortedCountryArray[indexPath.row].name
             return cell
         }
     }
@@ -115,13 +118,13 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         
         if tableView == tableViewCountry {
-            let selectedCountry = countryArray[indexPath.row]
+            let selectedCountry = sortedCountryArray[indexPath.row]
             countryCode = selectedCountry.code
             navigationItem.title = selectedCountry.name
             hideCountryTableView(frame: screenSize)
             navigationItem.searchController?.searchBar.resignFirstResponder()
-
             getHolidayData()
+            navigationItem.searchController?.isActive = false
         }
     }
 
@@ -130,37 +133,50 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 extension ViewController: UISearchBarDelegate {
     
     private func settingNavigationItems() {
-        // Setting Navigation Large Titles
-        navigationItem.largeTitleDisplayMode = .automatic
-        navigationController?.navigationBar.prefersLargeTitles = true
-        
+
         // Setting Search Bar inside Navigation Controller
         let searchController = UISearchController(searchResultsController: nil)
         navigationItem.searchController = searchController
         navigationItem.searchController?.searchBar.delegate = self
         navigationItem.searchController?.obscuresBackgroundDuringPresentation = false
         navigationItem.searchController?.hidesNavigationBarDuringPresentation = false
+        navigationItem.searchController?.searchBar.placeholder = "Enter Country Name"
+        
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        sortedCountryArray = countryArray
+        tableViewCountry.reloadData()
+        tableViewCountry.scrollToRow(at: [0,0], at: .top, animated: true)
         showCountryTableView(frame: screenSize)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         hideCountryTableView(frame: screenSize)
     }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        sortedCountryArray = countryArray
+        
+        if searchText != "" {
+            sortedCountryArray = countryArray.filter({$0.name.contains(searchText)})
+        }
+        
+        tableViewCountry.reloadData()
+    }
 }
 
 extension ViewController {
     private func showCountryTableView(frame: CGRect) {
         UIView.animate(withDuration: 0.2) {
-            self.tableViewCountry.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height - self.keyboardHeight)
+            self.tableViewCountry.frame = CGRect(x: 0, y: self.tableViewHoliday.frame.origin.y, width: frame.width, height: frame.height - self.keyboardHeight)
         }
     }
     
     private func hideCountryTableView(frame: CGRect) {
         UIView.animate(withDuration: 0.2) {
-            self.tableViewCountry.frame = CGRect(x: 0, y: 0, width: frame.width, height: 0)
+            self.tableViewCountry.frame = CGRect(x: 0, y: self.tableViewHoliday.frame.origin.y, width: frame.width, height: 0)
         }
     }
 }
@@ -194,6 +210,7 @@ extension ViewController {
             do {
                 let countryData = try JSONDecoder().decode([Country].self, from: data)
                 self.countryArray = countryData
+                self.sortedCountryArray = self.countryArray
                 
             } catch {
                 print("Unable to Fetch Country Data = ", error)
