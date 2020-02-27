@@ -70,6 +70,7 @@ class ViewController: UIViewController {
                 
                 DispatchQueue.main.async {
                     self.tableViewHoliday.reloadData()
+                    self.tableViewHoliday.scrollToRow(at: [0,0], at: .top, animated: false)
                 }
                 
             } catch {
@@ -81,6 +82,7 @@ class ViewController: UIViewController {
     
 }
 
+// TableView Delegate and Datasource Functions.
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     private func settingDelegates() {
@@ -108,11 +110,30 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        if tableView == tableViewCountry {
+            let selectedCountry = countryArray[indexPath.row]
+            countryCode = selectedCountry.code
+            navigationItem.title = selectedCountry.name
+            hideCountryTableView(frame: screenSize)
+            navigationItem.searchController?.searchBar.resignFirstResponder()
+
+            getHolidayData()
+        }
+    }
+
 }
 
 extension ViewController: UISearchBarDelegate {
     
     private func settingNavigationItems() {
+        // Setting Navigation Large Titles
+        navigationItem.largeTitleDisplayMode = .automatic
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
         // Setting Search Bar inside Navigation Controller
         let searchController = UISearchController(searchResultsController: nil)
         navigationItem.searchController = searchController
@@ -173,6 +194,7 @@ extension ViewController {
             do {
                 let countryData = try JSONDecoder().decode([Country].self, from: data)
                 self.countryArray = countryData
+                
             } catch {
                 print("Unable to Fetch Country Data = ", error)
             }
