@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SVProgressHUD
 
 class ViewController: UIViewController {
 
@@ -18,6 +19,16 @@ class ViewController: UIViewController {
     let countryCellId = "countryCellId"
     
     @IBOutlet weak var tableViewHoliday: UITableView!
+    
+    let errorLabel: UILabel = {
+        let label = UILabel()
+        label.text = ""
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     lazy var tableViewCountry: UITableView = {
         let tableView = UITableView()
@@ -43,11 +54,15 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var descriptionViewHeightConstraint: NSLayoutConstraint!
     
+    var errorLabelLeadingConstraint: NSLayoutConstraint!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         countryCode = UserDefaults.standard.string(forKey: "code") ?? "IN"
         countryName = UserDefaults.standard.string(forKey: "name") ?? "India"
         view.addSubview(tableViewCountry)
+        view.addSubview(errorLabel)
+        settingConstraints()
         getKeyboardHeight()
         settingGestureRecognizer()
         settingDelegates()
@@ -57,36 +72,6 @@ class ViewController: UIViewController {
         getHolidayData()
     }
 
-    private func getHolidayData() {
-        
-        // this is will JSON data.
-        let modifiedURL = "https://calendarific.com/api/v2/holidays?&api_key=\(apiKey)&country=\(countryCode)&year=\(holidayYear)"
-        
-        let url = URL(string: modifiedURL)
-        
-        URLSession.shared.dataTask(with: url!) { (data, response, error) in
-            
-            guard let data = data else {return}
-            
-            do {
-                // JSONDecoder can Throw Error
-                let holidayData = try JSONDecoder().decode(Root.self, from: data)
-                
-                // Inserting the Holiday Data fetched from web into the array of Holidays which we will use to show the data in TableViewCells
-                self.holidayArray = holidayData.responses.holidays
-                
-                DispatchQueue.main.async {
-                    self.tableViewHoliday.reloadData()
-                    self.tableViewHoliday.scrollToRow(at: [0,0], at: .top, animated: false)
-                }
-                
-            } catch {
-                print("Unable to Fetch Data = ", error)
-            }
-            
-        }.resume()
-    }
-    
 }
 
 // TableView Delegate and Datasource Functions.
@@ -143,60 +128,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 
 }
 
-extension ViewController: UISearchBarDelegate {
-    
-    private func settingNavigationItems() {
-
-        // Updating Navigation Titile
-        navigationItem.title = countryName
-        
-        // Setting Search Bar inside Navigation Controller
-        let searchController = UISearchController(searchResultsController: nil)
-        navigationItem.searchController = searchController
-        navigationItem.searchController?.searchBar.delegate = self
-        navigationItem.searchController?.obscuresBackgroundDuringPresentation = false
-        navigationItem.searchController?.hidesNavigationBarDuringPresentation = false
-        navigationItem.searchController?.searchBar.placeholder = "Enter Country Name"
-        
-    }
-    
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        sortedCountryArray = countryArray
-        tableViewCountry.reloadData()
-        tableViewCountry.scrollToRow(at: [0,0], at: .top, animated: true)
-        showCountryTableView(frame: screenSize)
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        hideCountryTableView(frame: screenSize)
-    }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        
-        sortedCountryArray = countryArray
-        
-        if searchText != "" {
-            sortedCountryArray = countryArray.filter({$0.name.contains(searchText)})
-        }
-        
-        tableViewCountry.reloadData()
-    }
-}
-
-extension ViewController {
-    private func showCountryTableView(frame: CGRect) {
-        UIView.animate(withDuration: 0.2) {
-            self.tableViewCountry.frame = CGRect(x: 0, y: self.tableViewHoliday.frame.origin.y, width: frame.width, height: frame.height - self.keyboardHeight)
-        }
-    }
-    
-    private func hideCountryTableView(frame: CGRect) {
-        UIView.animate(withDuration: 0.2) {
-            self.tableViewCountry.frame = CGRect(x: 0, y: self.tableViewHoliday.frame.origin.y, width: frame.width, height: 0)
-        }
-    }
-}
-
+// Get Keyboard Height
 extension ViewController {
     private func getKeyboardHeight() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil
@@ -211,29 +143,23 @@ extension ViewController {
     }
 }
 
-
-// Getting Country Name and Code from Locally Stored JSON.
-
+// Setting and Animating Error Label (UILabel)
 extension ViewController {
-    private func getCountryData() {
-        let path = Bundle.main.path(forResource: "CountryCode", ofType: "json")
-        let url = URL(fileURLWithPath: path!)
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            
-            guard let data = data else {return}
-            
-            do {
-                let countryData = try JSONDecoder().decode([Country].self, from: data)
-                self.countryArray = countryData
-                self.sortedCountryArray = self.countryArray
-                
-            } catch {
-                print("Unable to Fetch Country Data = ", error)
-            }
-            
-        }.resume()
     
+    // Calls in ViewDidLoad
+    private func settingConstraints() {
+        errorLabelLeadingConstraint = errorLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -1000)
+        errorLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
+        errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 0).isActive = true
+        errorLabelLeadingConstraint.isActive = true
+    }
+    
+    // Calls When Error Catches or SearchBar Editing Begins.
+    func animatingErrorLabel(value: CGFloat) {
+        errorLabelLeadingConstraint.constant = value
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 4, options: .curveEaseIn, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: nil)
     }
 }
 
