@@ -29,6 +29,7 @@ class ViewController: UIViewController {
     
     // Can create your own API Key from "calendarific.com"
     var apiKey = "533b84a223a70aa1599d38660e5103628c842b3d"
+    var countryName = "India"
     var countryCode = "IN"
     var holidayYear = "2020"
     
@@ -44,7 +45,8 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        countryCode = UserDefaults.standard.string(forKey: "code") ?? "IN"
+        countryName = UserDefaults.standard.string(forKey: "name") ?? "India"
         view.addSubview(tableViewCountry)
         getKeyboardHeight()
         settingGestureRecognizer()
@@ -52,7 +54,7 @@ class ViewController: UIViewController {
         settingNavigationItems()
         updateDescriptionViewConstraints(height: 0, animation: false)
         getCountryData()
-        
+        getHolidayData()
     }
 
     private func getHolidayData() {
@@ -122,11 +124,17 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         if tableView == tableViewCountry {
             let selectedCountry = sortedCountryArray[indexPath.row]
             countryCode = selectedCountry.code
+            countryName = selectedCountry.name
+            // Setting Navigation Title as Country Selected
             navigationItem.title = selectedCountry.name
+            // Hide Country TableView
             hideCountryTableView(frame: screenSize)
             navigationItem.searchController?.searchBar.resignFirstResponder()
             getHolidayData()
+            // Hiding Search Controller
             navigationItem.searchController?.isActive = false
+            UserDefaults.standard.set(countryCode, forKey: "code")
+            UserDefaults.standard.set(countryName, forKey: "name")
         }
         else {
             updateDescription(description: holidayArray[indexPath.row].description)
@@ -139,6 +147,9 @@ extension ViewController: UISearchBarDelegate {
     
     private func settingNavigationItems() {
 
+        // Updating Navigation Titile
+        navigationItem.title = countryName
+        
         // Setting Search Bar inside Navigation Controller
         let searchController = UISearchController(searchResultsController: nil)
         navigationItem.searchController = searchController

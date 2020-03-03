@@ -53,9 +53,9 @@ extension ViewController: UIGestureRecognizerDelegate {
             // When Pan Gesture Ends
         else if sender.state == .ended {
             // Update DescriptionView with Animation
-            if descriptionViewHeightConstraint.constant < 100 {
+            if descriptionViewHeightConstraint.constant <= 100 {
                updateDescriptionViewConstraints(height: 0, animation: true)
-            } else if descriptionViewHeightConstraint.constant > 200 {
+            } else if descriptionViewHeightConstraint.constant > 100 {
                updateDescriptionViewConstraints(height: 200, animation: true)
             }
         }
