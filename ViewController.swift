@@ -42,20 +42,15 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var descriptionViewHeightConstraint: NSLayoutConstraint!
     
-    
-    @IBOutlet weak var descriptionLabelHeightConstraint: NSLayoutConstraint!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        settingConstraints()
-        
         
         view.addSubview(tableViewCountry)
         getKeyboardHeight()
         settingGestureRecognizer()
         settingDelegates()
         settingNavigationItems()
+        updateDescriptionViewConstraints(height: 0, animation: false)
         getCountryData()
         
     }
@@ -134,7 +129,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             navigationItem.searchController?.isActive = false
         }
         else {
-            descriptionLabel.text = holidayArray[indexPath.row].description
+            updateDescription(description: holidayArray[indexPath.row].description)
         }
     }
 

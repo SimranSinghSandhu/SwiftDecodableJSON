@@ -64,8 +64,7 @@
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="Upz-Ex-kd1"/>
                     <connections>
-                        <outlet property="descriptionLabel" destination="VrB-3a-95d" id="qqQ-hZ-XcV"/>
-                        <outlet property="descriptionLabelHeightConstraint" destination="o6e-Uq-QeX" id="O21-ZK-aSV"/>
+                        <outlet property="descriptionLabel" destination="VrB-3a-95d" id="Nfz-eY-KxC"/>
                         <outlet property="descriptionView" destination="IZw-jk-mct" id="xOM-Oe-3Om"/>
                         <outlet property="descriptionViewHeightConstraint" destination="o6e-Uq-QeX" id="sEO-gu-vuO"/>
                         <outlet property="tableViewHoliday" destination="QLh-XE-Ksr" id="e7C-0O-Kjz"/>
