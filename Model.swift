@@ -29,6 +29,7 @@ struct Responses: Decodable {
 
 struct Holidays: Decodable {
     var name: String
+    var description: String
     var date: Date
 }
 

@@ -37,19 +37,26 @@ class ViewController: UIViewController {
     var countryArray = [Country]()
     var sortedCountryArray = [Country]()
     
+    @IBOutlet weak var descriptionView: UIView!
+    @IBOutlet weak var descriptionLabel: UILabel!
+    
+    @IBOutlet weak var descriptionViewHeightConstraint: NSLayoutConstraint!
+    
+    
+    @IBOutlet weak var descriptionLabelHeightConstraint: NSLayoutConstraint!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        settingConstraints()
+        
+        
         view.addSubview(tableViewCountry)
-        
         getKeyboardHeight()
-        
+        settingGestureRecognizer()
         settingDelegates()
         settingNavigationItems()
         getCountryData()
-//        getHolidayData()
-        
-        print()
         
     }
 
@@ -125,6 +132,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             navigationItem.searchController?.searchBar.resignFirstResponder()
             getHolidayData()
             navigationItem.searchController?.isActive = false
+        }
+        else {
+            descriptionLabel.text = holidayArray[indexPath.row].description
         }
     }
 
@@ -220,4 +230,6 @@ extension ViewController {
     
     }
 }
+
+
 

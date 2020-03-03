@@ -29,11 +29,34 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <view opaque="NO" alpha="0.84999999999999998" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IZw-jk-mct">
+                                <rect key="frame" x="0.0" y="612" width="414" height="250"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Home" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VrB-3a-95d">
+                                        <rect key="frame" x="10" y="0.0" width="394" height="250"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="VrB-3a-95d" firstAttribute="centerX" secondItem="IZw-jk-mct" secondAttribute="centerX" id="4gK-Ob-pzD"/>
+                                    <constraint firstItem="VrB-3a-95d" firstAttribute="centerY" secondItem="IZw-jk-mct" secondAttribute="centerY" id="Fp7-Zg-EAr"/>
+                                    <constraint firstAttribute="trailing" secondItem="VrB-3a-95d" secondAttribute="trailing" constant="10" id="aFy-w3-Sr7"/>
+                                    <constraint firstItem="VrB-3a-95d" firstAttribute="leading" secondItem="IZw-jk-mct" secondAttribute="leading" constant="10" id="mPg-Ol-yyf"/>
+                                    <constraint firstAttribute="height" constant="250" id="o6e-Uq-QeX"/>
+                                    <constraint firstItem="VrB-3a-95d" firstAttribute="height" secondItem="IZw-jk-mct" secondAttribute="height" id="oYD-OQ-Iy8"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="QLh-XE-Ksr" secondAttribute="trailing" id="1dR-ZB-VXf"/>
+                            <constraint firstItem="IZw-jk-mct" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="7jG-zl-N73"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="IZw-jk-mct" secondAttribute="trailing" id="8Xl-PS-r4y"/>
                             <constraint firstItem="QLh-XE-Ksr" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Vq9-05-0vD"/>
+                            <constraint firstItem="IZw-jk-mct" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="fpL-kD-cKz"/>
                             <constraint firstItem="QLh-XE-Ksr" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="gCq-0d-zDK"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="QLh-XE-Ksr" secondAttribute="bottom" id="y5N-wM-Kt2"/>
                         </constraints>
@@ -41,6 +64,10 @@
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="Upz-Ex-kd1"/>
                     <connections>
+                        <outlet property="descriptionLabel" destination="VrB-3a-95d" id="qqQ-hZ-XcV"/>
+                        <outlet property="descriptionLabelHeightConstraint" destination="o6e-Uq-QeX" id="O21-ZK-aSV"/>
+                        <outlet property="descriptionView" destination="IZw-jk-mct" id="xOM-Oe-3Om"/>
+                        <outlet property="descriptionViewHeightConstraint" destination="o6e-Uq-QeX" id="sEO-gu-vuO"/>
                         <outlet property="tableViewHoliday" destination="QLh-XE-Ksr" id="e7C-0O-Kjz"/>
                     </connections>
                 </viewController>
